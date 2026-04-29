@@ -1,1 +1,13 @@
 03-large-structured-data/input
+03-large-structured-data/temp
+03-large-structured-data/output
+
+# Temporary / generated data
+/temp/
+/03-large-structured-data/temp/
+*.duckdb
+*.parquet
+
+# Generated output
+/output/
+/03-large-structured-data/output/
