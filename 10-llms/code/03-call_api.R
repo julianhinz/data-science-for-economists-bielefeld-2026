@@ -16,24 +16,12 @@ if (api_key == "") stop("Set OPENROUTER_API_KEY in .Renviron")
 ecb_speeches <- fread("temp/ecb_speeches_prompts.csv")
 
 # create the chat object using ellmer
-chat <- chat_openai(
-  base_url = "https://openrouter.ai/api/v1",
-  api_key = api_key,
-  model = "deepseek/deepseek-chat-v3-0324:free",
-  system_prompt = "You are a monetary policy expert.",
+chat <- chat_openrouter(
+  model = "deepseek/deepseek-v4-flash",
   api_args = list(temperature = 0)
 )
 
-# define expected output structure
-type_classification <- type_object(
-  classification = type_enum(values = c("hawkish", "dovish", "neutral")),
-  confidence = type_number(),
-  keywords = type_array(items = type_string())
-)
-
-# test with a single speech
-result <- chat$extract_data(ecb_speeches$prompt[1], type = type_classification)
-print(result)
+example = chat$chat(ecb_speeches$prompt[1])
 
 # create output directory
 dir.create("temp/LLM_responses", showWarnings = FALSE, recursive = TRUE)
@@ -46,11 +34,10 @@ for (i in 1:10) {
   chat_i <- chat$clone()
 
   tryCatch({
-    result <- chat_i$extract_data(ecb_speeches$prompt[i], type = type_classification)
+    result <- chat_i$chat(ecb_speeches$prompt[i])
 
     # save the response as JSON
-    writeLines(
-      jsonlite::toJSON(result, auto_unbox = TRUE, pretty = TRUE),
+    writeLines(result,
       paste0("temp/LLM_responses/response_", ecb_speeches$id[i], ".json")
     )
   }, error = function(e) {

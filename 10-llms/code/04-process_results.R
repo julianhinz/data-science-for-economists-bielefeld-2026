@@ -37,8 +37,8 @@ responses[, id := ids[file_idx]]
 responses[, file_idx := NULL]
 
 # expand keywords into separate columns
-responses[, paste0("keyword_", seq_len(max(lengths(keywords)))) :=
-  transpose(keywords)]
+responses[, paste0("keyword_", seq_len(max(lengths(responses$keywords)))) :=
+  transpose(responses$keywords)]
 
 responses[, keywords := NULL]
 

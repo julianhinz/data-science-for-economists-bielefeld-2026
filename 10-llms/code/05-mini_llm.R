@@ -26,7 +26,7 @@ ecb_speeches <- fread("temp/ecb_speeches_cleaned.csv")
 # Subsample: a tiny model cannot learn patterns from 50M+ characters.
 # 300 speeches (~2M chars) gives the model enough repetition to pick up
 # common words and phrases within a reasonable training time.
-ecb_sample <- ecb_speeches[sample(.N, min(300L, .N))]
+ecb_sample <- ecb_speeches[sample(.N, min(50L, .N))]
 
 corpus <- paste(ecb_sample$contents, collapse = "\n\n")
 cat("Corpus length:", format(nchar(corpus), big.mark = ","), "characters\n")
@@ -273,6 +273,7 @@ for (iter in seq_len(max_iters)) {
   out$loss$backward()
   optimizer$step()
 }
+saveRDS(model, file = "temp/mini_gpt_model.rds")
 
 # 6 - generate text ----
 
